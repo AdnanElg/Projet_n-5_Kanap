@@ -1,7 +1,6 @@
 
 //Commentaire index.html :
 
-
 /* 
 <article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
     <div class="cart__item__img">
@@ -152,22 +151,25 @@ TotalPriceQuantity()
 
 
 
-let inputQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity input"));
-let pQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity p"));
-let pTotalQuantity = document.querySelector('#totalQuantity');
-let pPriceTotal = document.querySelector('#totalPrice');
 
+//Probléme aux niveaux du changement de quantity total + total price à revoir :
 function modifValue () {
-    for (let i = 0; i < inputQuantity.length; i++) {
 
+let inputQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity input"));
+let valueQuantity = Array.from(document.querySelectorAll('.itemQuantity'));
+let pQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity p"));
+
+    for (let i = 0; i < inputQuantity.length; i++) {
         inputQuantity[i].addEventListener("change", () => {
-            let i = pQuantity.textContent = "Qté : " +  inputQuantity.values;
-            console.log(i)
+            pQuantity[i].textContent = "Qté : " +  valueQuantity[i].value;
+            TotalPriceQuantity();
         });
     }
 }
 
 modifValue()
+
+
 
 
 
@@ -207,6 +209,7 @@ function deleteProduct() {
 }
 
 deleteProduct();
+
 
 
 
