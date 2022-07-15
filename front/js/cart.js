@@ -108,6 +108,7 @@ let localStorageProducts = JSON.parse(localStorage.getItem("produits"));
     
     // Récupération des Id de chaque articles et envoi dans le tableau de la variable arrays[] :    
     arrays.push(product.id);
+
 }
     
 
@@ -353,21 +354,17 @@ const contact = {
     
     /********************************FIN GESTION DU FORMULAIRE ****************************/
  
-
+    const order = {contact, arrays};
+    
+    fetch("http://localhost:3000/api/products/order",{
+        method : "POST",
+        body : JSON.stringify(order),
+        headers : {
+            "Content-Type" : "application/json"
+        },
+    })
+    .then((response)=> response.json())
+    .then((data)=>{console.log(data);});
+    
     /*******************************REQUÊTE DU SERVEUR ET POST DES DONNÉES ***************/
-
-
-    function sendToFromServer() {
-        const sendToFromServer = fetch("http://localhost:3000/api/products/order", {
-          method: "POST",
-          body: JSON.stringify( contact, arrays ),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-    }
-
-});
-
-
-
+})
