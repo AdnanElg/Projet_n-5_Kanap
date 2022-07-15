@@ -197,7 +197,7 @@ fetch('http://localhost:3000/api/products/' + id)
         const popupConfirmation = () => {
         
           //SI OUI alors redirection vers = cart.html :
-        if (confirm("L'article " + name + " à bien été ajouté au panier, consultez le panier OK ou revenir à la page d'accueil ANNULER")) {
+        if (confirm("L'article " + name + " à bien été ajouté au panier 🛒, consultez le panier 🆗 ou revenir à la page d'accueil ❌")) {
           window.location.href = "cart.html";
         }
         
