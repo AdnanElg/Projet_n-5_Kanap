@@ -215,7 +215,7 @@ deleteProduct();
 
 
 //Sélection du bouton commander :
-btnSendForm = document.querySelector('#order');
+let btnSendForm = document.querySelector('#order');
 
 
 //Écoute du bouton commander sur le click pour pouvoir contrôler, valider et ennoyer le formulaire et les produits au back-end :
@@ -338,12 +338,15 @@ const contact = {
     }
 
 
-        
-    
+
     //Contrôle validité formulaire avant envoie dans le locale storage : 
     if (firstNameControle() && lastNameControle() && addressControl() && cityControl() && emailControle()) {
     //Mettre l'objet "contact" dans le local storage :
         localStorage.setItem("contact", JSON.stringify(contact));
+
+        btnSendForm.value = "Articles et formulaire valide\n Passer commande !";
+
+        sendFromToServer();
     } 
     
     else {
@@ -354,17 +357,20 @@ const contact = {
     
     /********************************FIN GESTION DU FORMULAIRE ****************************/
  
-    const order = {contact, arrays};
-    
-    fetch("http://localhost:3000/api/products/order",{
-        method : "POST",
-        body : JSON.stringify(order),
-        headers : {
-            "Content-Type" : "application/json"
-        },
-    })
-    .then((response)=> response.json())
-    .then((data)=>{console.log(data);});
-    
     /*******************************REQUÊTE DU SERVEUR ET POST DES DONNÉES ***************/
+
+    function sendFromToServer () {
+        fetch("http://localhost:3000/api/products/order", {
+            method: "POST",
+            body: JSON.stringify({ contact, arrays }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })    
+    }
 })
+
+
+/******************************* FIN REQUÊTE DU SERVEUR ET POST DES DONNÉES ***************/
+
+
