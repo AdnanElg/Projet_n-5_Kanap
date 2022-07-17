@@ -1,6 +1,7 @@
 
 //Commentaire index.html :
 
+
 /* 
 <article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
     <div class="cart__item__img">
@@ -344,8 +345,6 @@ const contact = {
     //Mettre l'objet "contact" dans le local storage :
         localStorage.setItem("contact", JSON.stringify(contact));
 
-        btnSendForm.value = "Articles et formulaire valide\n Passer commande !";
-
         sendFromToServer();
     } 
     
@@ -353,24 +352,41 @@ const contact = {
         alert("❌ Veillez bien remplir le formulaire ❌")
     }
     
-        
     
     /********************************FIN GESTION DU FORMULAIRE ****************************/
- 
-    /*******************************REQUÊTE DU SERVEUR ET POST DES DONNÉES ***************/
+     
+    // Variable qui récupère l'orderId envoyé comme réponse par le serveur lors de la requête POST :
+    var orderId = "";
 
+    /*******************************REQUÊTE DU SERVEUR ET POST DES DONNÉES *******************/
+    
     function sendFromToServer () {
+
         fetch("http://localhost:3000/api/products/order", {
             method: "POST",
-            body: JSON.stringify({ contact, arrays }),
+            body: JSON.stringify({contact, arrays}),
             headers: {
                 "Content-Type": "application/json",
             },
-        })    
+        }) 
+        
+        // Ensuite on stock la réponse de l'api (orderId) :
+        .then((response) => {
+            response.json();
+        })
+        
+
+        .then((server) => {
+            orderId.push(server);
+        });
+
+
+        // Si la variable orderId n'est pas une chaîne vide on redirige notre utilisateur sur la page confirmation avec la variable :
+        if (orderId != "") {
+            location.href = "confirmation.html?id=" + orderId;
+        }
     }
 })
 
 
 /******************************* FIN REQUÊTE DU SERVEUR ET POST DES DONNÉES ***************/
-
-
