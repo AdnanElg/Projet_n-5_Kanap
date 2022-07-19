@@ -1,15 +1,17 @@
 // URLSearchParams : 
 
-const getProductId = () => {
-    return new URL(location.href).searchParams.get("id");
-};
+let url = new URLSearchParams(document.location.search);
 
-const orderId = getProductId ();
+let id = url.get("id");
+
+const orderId = id;
 
 //Affichage de l'id du produit :
+
 const idConfirmation = document.querySelector("#orderId");
 
-idConfirmation.textContent = orderId;
+idConfirmation.innerHTML = `<span id="orderId"><strong>${orderId}</strong></span>`;
   
 //Nettoyage du local storage :
+
 localStorage.clear();

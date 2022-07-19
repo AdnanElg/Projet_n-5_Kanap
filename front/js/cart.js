@@ -107,17 +107,17 @@ let localStorageProducts = JSON.parse(localStorage.getItem("produits"));
         </div>
     </article>`;
     
-    // Récupération des Id de chaque articles et envoi dans le tableau de la variable arrays[] :    
-    products += product.id;
+    // Récupération des Id de chaque articles et envoi dans le tableau de la variable products[] :    
+    products.push(product.id);
 
 }
     
 
 
-// le tableau de la quantityTotalCalcul qui contient la quantity de chaque articles qui est dans le local storage :
+// quantityTotalCalcul qui contient la quantity de chaque articles qui est dans le local storage :
 let quantityTotalCalcul = 0;
 
-// le tableau de la priceTotalCalcul qui contient la price de chaque articles qui est dans le local storage :
+// priceTotalCalcul qui contient la price de chaque articles qui est dans le local storage :
 let priceTotalCalcul = 0;  
 
 //Déclaration d'une const avec une fonction TotalPriceQuantity qui vas afficher la quantity et le price total des produits :
@@ -125,23 +125,18 @@ const TotalPriceQuantity = () => {
     
     for (let i = 0; i < localStorageProducts.length; i++) {
 
-        //Déclaration de la variable quantityProduitDansLePanier dans laquelle ont vas chercher la quantity de tout les articles et que l'on push dans le tableaux quantityTotalCalcul :
+        //Déclaration de la variable quantityProduitDansLePanier dans laquelle ont vas chercher la quantity de tout les articles et que l'on met dans quantityTotalCalcul :
         let quantityProduitDansLePanier = localStorageProducts[i].quantity;
         quantityTotalCalcul += parseInt(quantityProduitDansLePanier);
 
-        //Déclaration de la variable priceProduitDansLePanier dans laquelle ont vas chercher le price de chaque articles :
+        //Déclaration de la variable priceProduitDansLePanier dans laquelle ont vas chercher le price de chaque articles et que l'on met dans priceTotalCalcul :
         let priceProduitDansLePanier = localStorageProducts[i].price * localStorageProducts[i].quantity;
         priceTotalCalcul += priceProduitDansLePanier;
         
     }
-          
-    //Utilisation de la propriété reduce dans laquelle on vas récupérée les tableaux quantityTotal et priceTotal qui vont additioner les valeur dans les tableaux :
-    const quantityTotal = quantityTotalCalcul;
-    const priceTotal = priceTotalCalcul;
-    
     
     //Affichage des résultat grâce à innerHtml : 
-    document.querySelector('.cart__price').innerHTML = `<p>Total (<span id="totalQuantity">${quantityTotal}</span> articles) : <span id="totalPrice">${priceTotal}</span> €</p>`;
+    document.querySelector('.cart__price').innerHTML = `<p>Total (<span id="totalQuantity">${quantityTotalCalcul}</span> articles) : <span id="totalPrice">${priceTotalCalcul}</span> €</p>`;
 }
 
 
@@ -151,28 +146,28 @@ TotalPriceQuantity()
 
 
 
-//Probléme aux niveaux du changement de quantity total + total price à revoir :
+//Création function  modifValue qui va changer la quantity des articles et le totalquantity avec totalprice :
 function modifValue () {
 
 let inputQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity input"));
 let valueQuantity = Array.from(document.querySelectorAll('.itemQuantity'));
 let pQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity p"));
 
+//Boucle for en vas chercher tout les input dans lequelle on effectue un addEventListener pour changer la value des articles : 
     for (let i = 0; i < inputQuantity.length; i++) {
-        inputQuantity[i].addEventListener("change", (e) => {
+        inputQuantity[i].addEventListener("change", () => {
             pQuantity[i].textContent = "Qté : " +  valueQuantity[i].value;
             
-            // Copie du tableau localStorageProducts dans le tableau tabUpdate
+            // Copie du tableau localStorageProducts dans le tableau tabUpdate :
             tabUpdate = localStorageProducts;
 
-            //On modifie la quantité d'un élément à chaque index [i] du tableau écouté
+            //On modifie la quantité d'un élément à chaque index [i] du tableau écouté :
             tabUpdate[i].quantity = valueQuantity[i].value;
-            console.log(tabUpdate[i])
 
-            // Mise à jour du local storage
+            // Mise à jour du local storage :
             localStorageProducts = localStorage.setItem("produits", JSON.stringify(tabUpdate));
 
-            // Rafraîchissement de la page
+            // Rafraîchissement de la page :
             window.location.href = "cart.html";
  
             TotalPriceQuantity();
@@ -370,10 +365,9 @@ const contact = {
      
     // Variable qui récupère l'orderId envoyé comme réponse par le serveur lors de la requête POST :
     var orderId = "";
-
+    
     /*******************************REQUÊTE DU SERVEUR ET POST DES DONNÉES *******************/
-
-
+    
     function sendFromToServer () {
 
         fetch("http://localhost:3000/api/products/order", {
@@ -392,16 +386,14 @@ const contact = {
 
         .then((server) => {
             orderId = server.orderId;
-            console.log(server)
-
-        // Si la variable orderId n'est pas une chaîne vide on redirige notre utilisateur sur la page confirmation avec la variable :
+            // Si la variable orderId n'est pas une chaîne vide on redirige notre utilisateur sur la page confirmation avec la variable :
             if (orderId != "") {
                 location.href = "confirmation.html?id=" + orderId;
             }
-
-        });
+        })
     }
 })
 
 
 /******************************* FIN REQUÊTE DU SERVEUR ET POST DES DONNÉES ***************/
+
