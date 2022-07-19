@@ -151,12 +151,10 @@ function modifValue () {
 
 let inputQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity input"));
 let valueQuantity = Array.from(document.querySelectorAll('.itemQuantity'));
-let pQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity p"));
 
-//Boucle for en vas chercher tout les input dans lequelle on effectue un addEventListener pour changer la value des articles : 
+//Boucle for en vas chercher tout les input dans lequelle on effectue un addEventListener pour changer la value des articles :
     for (let i = 0; i < inputQuantity.length; i++) {
         inputQuantity[i].addEventListener("change", () => {
-            pQuantity[i].textContent = "Qté : " +  valueQuantity[i].value;
             
             // Copie du tableau localStorageProducts dans le tableau tabUpdate :
             tabUpdate = localStorageProducts;
@@ -352,8 +350,7 @@ const contact = {
     if (firstNameControle() && lastNameControle() && addressControl() && cityControl() && emailControle()) {
     //Mettre l'objet "contact" dans le local storage :
         localStorage.setItem("contact", JSON.stringify(contact));
-
-         sendFromToServer();
+        sendFromToServer();
     } 
     
     else {
@@ -367,6 +364,7 @@ const contact = {
     var orderId = "";
     
     /*******************************REQUÊTE DU SERVEUR ET POST DES DONNÉES *******************/
+    
     
     function sendFromToServer () {
 
@@ -388,6 +386,7 @@ const contact = {
             orderId = server.orderId;
             // Si la variable orderId n'est pas une chaîne vide on redirige notre utilisateur sur la page confirmation avec la variable :
             if (orderId != "") {
+                alert("✅ Votre commande à bient était prise en compte ✅");
                 location.href = "confirmation.html?id=" + orderId;
             }
         })

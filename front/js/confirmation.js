@@ -10,7 +10,7 @@ const orderId = id;
 
 const idConfirmation = document.querySelector("#orderId");
 
-idConfirmation.innerHTML = `<span id="orderId"><strong>${orderId}</strong></span>`;
+idConfirmation.innerHTML = `<span id="orderId"><strong>${orderId}</strong><br>Merci pour votre commande 😀 !</span>`;
   
 //Nettoyage du local storage :
 
