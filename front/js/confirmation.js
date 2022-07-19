@@ -1,10 +1,10 @@
 // URLSearchParams : 
 
-let url = new URLSearchParams(document.location.search);
+const getProductId = () => {
+    return new URL(location.href).searchParams.get("id");
+};
 
-let id = url.get("id");
-
-const orderId = id;
+const orderId = getProductId ();
 
 //Affichage de l'id du produit :
 const idConfirmation = document.querySelector("#orderId");

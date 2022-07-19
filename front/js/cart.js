@@ -68,7 +68,7 @@
 let localStorageProducts = JSON.parse(localStorage.getItem("produits"));    
 
 // Variable pour stocker les id de chaque articles présents dans le panier :
-    let arrays = [];
+    let products = [];
 
     // Condition de vérification si le panier existe et ou est vide et modification texte :
     if (localStorageProducts == null || localStorageProducts.length == 0) {
@@ -108,17 +108,17 @@ let localStorageProducts = JSON.parse(localStorage.getItem("produits"));
     </article>`;
     
     // Récupération des Id de chaque articles et envoi dans le tableau de la variable arrays[] :    
-    arrays.push(product.id);
+    products += product.id;
 
 }
     
 
 
 // le tableau de la quantityTotalCalcul qui contient la quantity de chaque articles qui est dans le local storage :
-let quantityTotalCalcul = [];
+let quantityTotalCalcul = 0;
 
 // le tableau de la priceTotalCalcul qui contient la price de chaque articles qui est dans le local storage :
-let priceTotalCalcul = [];  
+let priceTotalCalcul = 0;  
 
 //Déclaration d'une const avec une fonction TotalPriceQuantity qui vas afficher la quantity et le price total des produits :
 const TotalPriceQuantity = () => {
@@ -127,18 +127,17 @@ const TotalPriceQuantity = () => {
 
         //Déclaration de la variable quantityProduitDansLePanier dans laquelle ont vas chercher la quantity de tout les articles et que l'on push dans le tableaux quantityTotalCalcul :
         let quantityProduitDansLePanier = localStorageProducts[i].quantity;
-        quantityTotalCalcul.push(quantityProduitDansLePanier);
+        quantityTotalCalcul += parseInt(quantityProduitDansLePanier);
 
         //Déclaration de la variable priceProduitDansLePanier dans laquelle ont vas chercher le price de chaque articles :
         let priceProduitDansLePanier = localStorageProducts[i].price * localStorageProducts[i].quantity;
-        priceTotalCalcul.push(priceProduitDansLePanier);
+        priceTotalCalcul += priceProduitDansLePanier;
         
     }
           
     //Utilisation de la propriété reduce dans laquelle on vas récupérée les tableaux quantityTotal et priceTotal qui vont additioner les valeur dans les tableaux :
-    const reducer = (accumulator, currentValue) => accumulator + currentValue;
-    const quantityTotal = quantityTotalCalcul.reduce(reducer, 0);
-    const priceTotal = priceTotalCalcul.reduce(reducer, 0);
+    const quantityTotal = quantityTotalCalcul;
+    const priceTotal = priceTotalCalcul;
     
     
     //Affichage des résultat grâce à innerHtml : 
@@ -160,8 +159,22 @@ let valueQuantity = Array.from(document.querySelectorAll('.itemQuantity'));
 let pQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity p"));
 
     for (let i = 0; i < inputQuantity.length; i++) {
-        inputQuantity[i].addEventListener("change", () => {
+        inputQuantity[i].addEventListener("change", (e) => {
             pQuantity[i].textContent = "Qté : " +  valueQuantity[i].value;
+            
+            // Copie du tableau localStorageProducts dans le tableau tabUpdate
+            tabUpdate = localStorageProducts;
+
+            //On modifie la quantité d'un élément à chaque index [i] du tableau écouté
+            tabUpdate[i].quantity = valueQuantity[i].value;
+            console.log(tabUpdate[i])
+
+            // Mise à jour du local storage
+            localStorageProducts = localStorage.setItem("produits", JSON.stringify(tabUpdate));
+
+            // Rafraîchissement de la page
+            window.location.href = "cart.html";
+ 
             TotalPriceQuantity();
         });
     }
@@ -345,7 +358,7 @@ const contact = {
     //Mettre l'objet "contact" dans le local storage :
         localStorage.setItem("contact", JSON.stringify(contact));
 
-        sendFromToServer();
+         sendFromToServer();
     } 
     
     else {
@@ -359,12 +372,13 @@ const contact = {
     var orderId = "";
 
     /*******************************REQUÊTE DU SERVEUR ET POST DES DONNÉES *******************/
-    
+
+
     function sendFromToServer () {
 
         fetch("http://localhost:3000/api/products/order", {
             method: "POST",
-            body: JSON.stringify({contact, arrays}),
+            body:JSON.stringify({contact, products}) ,
             headers: {
                 "Content-Type": "application/json",
             },
@@ -372,19 +386,20 @@ const contact = {
         
         // Ensuite on stock la réponse de l'api (orderId) :
         .then((response) => {
-            response.json();
+            return response.json();
         })
         
 
         .then((server) => {
-            orderId.push(server);
-        });
-
+            orderId = server.orderId;
+            console.log(server)
 
         // Si la variable orderId n'est pas une chaîne vide on redirige notre utilisateur sur la page confirmation avec la variable :
-        if (orderId != "") {
-            location.href = "confirmation.html?id=" + orderId;
-        }
+            if (orderId != "") {
+                location.href = "confirmation.html?id=" + orderId;
+            }
+
+        });
     }
 })
 
