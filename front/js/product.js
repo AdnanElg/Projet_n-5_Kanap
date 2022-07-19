@@ -221,7 +221,7 @@ fetch('http://localhost:3000/api/products/' + id)
           
           // Si oui on ajoute juste la nouvelle quantité et la mise à jour du prix à l'article :
           if (item) {
-            item.quantity = item.quantity + optionProduct.quantity;
+            item.Number(quantity) = item.quantity + optionProduct.quantity;
             item.totalPrice = item.price * optionProduct.quantity;
             localStorage.setItem("produits", JSON.stringify(localStorageProducts));
             popupConfirmation();
