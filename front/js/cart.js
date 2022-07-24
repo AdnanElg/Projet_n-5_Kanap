@@ -59,70 +59,91 @@
 
 
 
-
-
-    
 //LE LOCALE STORAGE :
         
 //Déclaration de la variable "localStorageProducts" dans laquelles on met les key et les values qui sont dans le local stockage :
 let localStorageProducts = JSON.parse(localStorage.getItem("produits"));    
 
+
 // Variable pour stocker les id de chaque articles présents dans le panier :
     let products = [];
+
 
     // Condition de vérification si le panier existe et ou est vide et modification texte :
     if (localStorageProducts == null || localStorageProducts.length == 0) {
         document.querySelector('h1').textContent = '🛒 Le panier est vide 🛒 !';
         document.querySelector('.cart__price').innerHTML = `<p>Total (<span id="totalQuantity">0</span> articles) : <span id="totalPrice">0</span> €</p>`;
     }
-
-
+    
     else{
         document.querySelector('h1').textContent = '🛒 Voici votre panier 🛒 ';
     };
     
+
+    // Création d'une boucle for of dans laquelle ont injecte notre code grâce à un innerHTML et affichage des données :
     
-    // Création d'une boucle for of dans laquelle ont injecte notre code grâce à un innerHTML puis récupération des valeurs du local storage qu l'ont injecte à nos produits :
+    let i = 0;
+    
     for (product of localStorageProducts) {
 
-        document.querySelector('#cart__items').innerHTML += `<article class="cart__item" data-id= ${product.id}  data-color= ${product.colors}>
-        <div class="cart__item__img">
-            <img src=${product.imageUrl} alt=${product.altTxt}>
-        </div>
-        <div class="cart__item__content">
-            <div class="cart__item__content__description">
-                <h2>${product.name}</h2>
-                <p>Couleur du produit : ${product.colors}</p>
-                <p>Prix unitaire : ${product.price} €</p>
-            </div>
-            <div class="cart__item__content__settings">
-                <div class="cart__item__content__settings__quantity">
-                    <p> Qté : ${product.quantity} </p>
-                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${product.quantity}>
-                </div>
-                <div class="cart__item__content__settings__delete">
-                    <p class="deleteItem">Supprimer</p>
-                </div>
-            </div>
-        </div>
-    </article>`;
-    
-    // Récupération des Id de chaque articles et envoi dans le tableau de la variable products[] :    
-    products.push(product.id);
+        //requête Fetch : 
+        fetch('http://localhost:3000/api/products/' + product.id)
+        .then( (response) => response.json())
+        .then( (data) => {
 
+
+            //Création du tableau pour les produits à envoyer au serveur
+            products.push(product.id);
+
+
+            localStorageProducts[i].imageUrl = data.imageUrl;
+            localStorageProducts[i].altTxt = data.altTxt;
+            localStorageProducts[i].name = data.name;
+            localStorageProducts[i].price = data.price;
+
+
+            document.querySelector('#cart__items').innerHTML += `<article class="cart__item" data-id= ${localStorageProducts[i].id}  data-color= ${localStorageProducts[i].colors}>
+            <div class="cart__item__img">
+                <img src=${localStorageProducts[i].imageUrl} alt=${localStorageProducts[i].altTxt}>
+            </div>
+            <div class="cart__item__content">
+                <div class="cart__item__content__description">
+                    <h2>${localStorageProducts[i].name}</h2>
+                    <p>Couleur du produit : ${localStorageProducts[i].colors}</p>
+                    <p>Prix unitaire : ${localStorageProducts[i].price} €</p>
+                </div>
+                <div class="cart__item__content__settings">
+                    <div class="cart__item__content__settings__quantity">
+                        <p> Qté : ${localStorageProducts[i].quantity} </p>
+                        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${localStorageProducts[i].quantity}>
+                    </div>
+                    <div class="cart__item__content__settings__delete">
+                        <p class="deleteItem">Supprimer</p>
+                    </div>
+                </div>
+            </div>
+        </article>`;
+
+        TotalPriceQuantity();
+        deleteProduct();
+        modifValue();
+
+        i++;
+
+    });
+    
 }
-    
 
-
-// quantityTotalCalcul qui contient la quantity de chaque articles qui est dans le local storage :
-let quantityTotalCalcul = 0;
-
-// priceTotalCalcul qui contient la price de chaque articles qui est dans le local storage :
-let priceTotalCalcul = 0;  
 
 //Déclaration d'une const avec une fonction TotalPriceQuantity qui vas afficher la quantity et le price total des produits :
 const TotalPriceQuantity = () => {
-    
+        
+    // quantityTotalCalcul qui contient la quantity de chaque articles qui est dans le local storage :
+    var quantityTotalCalcul = 0;
+
+    // priceTotalCalcul qui contient la price de chaque articles qui est dans le local storage :
+    var priceTotalCalcul = 0;  
+
     for (let i = 0; i < localStorageProducts.length; i++) {
 
         //Déclaration de la variable quantityProduitDansLePanier dans laquelle ont vas chercher la quantity de tout les articles et que l'on met dans quantityTotalCalcul :
@@ -140,40 +161,47 @@ const TotalPriceQuantity = () => {
 }
 
 
-TotalPriceQuantity()
 
 
-
-
-
-//Création function  modifValue qui va changer la quantity des articles et le totalquantity avec totalprice :
+//Création function  modifValue qui va changer la quantity des articles :
 function modifValue () {
 
 let inputQuantity = Array.from(document.querySelectorAll(".cart__item__content__settings__quantity input"));
 let valueQuantity = Array.from(document.querySelectorAll('.itemQuantity'));
 
+
 //Boucle for en vas chercher tout les input dans lequelle on effectue un addEventListener pour changer la value des articles :
     for (let i = 0; i < inputQuantity.length; i++) {
-        inputQuantity[i].addEventListener("change", () => {
-            
-            // Copie du tableau localStorageProducts dans le tableau tabUpdate :
-            tabUpdate = localStorageProducts;
 
-            //On modifie la quantité d'un élément à chaque index [i] du tableau écouté :
+        inputQuantity[i].addEventListener("change", () => {
+        
+        // Copie du tableau localStorageProducts dans le tableau tabUpdate :
+        tabUpdate = localStorageProducts;
+            
+        //Création d'une boucle for pour supprimer dans le local storage les valeur altxt, imageUrl, name et price : 
+        for (let i = 0; i < tabUpdate.length; i++) { 
+        
+                delete tabUpdate[i].altTxt;
+                delete tabUpdate[i].imageUrl;
+                delete tabUpdate[i].name;
+                delete tabUpdate[i].price; 
+        }
+            
+        //On modifie la quantité d'un élément à chaque index [i] du tableau écouté :
             tabUpdate[i].quantity = valueQuantity[i].value;
 
-            // Mise à jour du local storage :
-            localStorageProducts = localStorage.setItem("produits", JSON.stringify(tabUpdate));
+        //Mise à jour du local storage :
+            localStorage.setItem("produits", JSON.stringify(tabUpdate));
 
-            // Rafraîchissement de la page :
+        //Rafraîchissement de la page :
             window.location.href = "cart.html";
- 
+
             TotalPriceQuantity();
         });
     }
 }
 
-modifValue()
+
 
 
 
@@ -181,15 +209,15 @@ modifValue()
 
 
 
+
+// Fonction de suppression des articles :
+function deleteProduct() {
+
 // Récupération boutons supprimer et transformation en tableau avec Array.from :
 let btn_supprimer = Array.from(document.querySelectorAll(".deleteItem"));
 
 // Nouveau tableau pour récupérer le tableau localStorageProducts existant et contrôler les suppression :
 let tabDelete = [];
-
-// Fonction de suppression des articles :
-function deleteProduct() {
-
   for (let i = 0; i < btn_supprimer.length; i++) {
 
     // Écoute d'évènements au click sur le tableau des boutons supprimer
@@ -201,11 +229,25 @@ function deleteProduct() {
       // Copie du tableau localStorageProducts dans le tableau tabControlDelete
       tabDelete = localStorageProducts;
 
+    
+    //Création d'une boucle for pour supprimer dans le local storage les valeur altxt, imageUrl, name et price l'orsque que l'ont supprime un article : 
+
+      for (let i = 0; i < tabDelete.length; i++) { 
+        
+        delete tabDelete[i].altTxt;
+        delete tabDelete[i].imageUrl;
+        delete tabDelete[i].name;
+        delete tabDelete[i].price;
+         
+    }
+
+      
       // Array.prototype.splice() supprime un élément à chaque index [i] du tableau écouté
       tabDelete.splice([i], 1);
-
+      
       // Mise à jour du local storage
       localStorageProducts = localStorage.setItem("produits", JSON.stringify(tabDelete));
+      
 
       // Rafraîchissement de la page
       window.location.href = "cart.html";
@@ -215,7 +257,6 @@ function deleteProduct() {
   }
 }
 
-deleteProduct();
 
 
 /*************************************  LE FORMULAIRE ********************************/
@@ -362,6 +403,7 @@ const contact = {
      
     // Variable qui récupère l'orderId envoyé comme réponse par le serveur lors de la requête POST :
     var orderId = "";
+
     
     /*******************************REQUÊTE DU SERVEUR ET POST DES DONNÉES *******************/
     

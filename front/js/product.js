@@ -176,14 +176,8 @@ fetch('http://localhost:3000/api/products/' + id)
         // Enregistrement des valeurs dans un objet optionProduct :
         const optionProduct = { 
           id: id,
-          name: name,
-          imageUrl: imageUrl,
-          altTxt: altTxt,
-          description: description,
           colors: colors,
           quantity: Number(quantity),
-          price: Number(price),
-          totalPrice: price*quantity,
         }
 
         
@@ -219,10 +213,9 @@ fetch('http://localhost:3000/api/products/' + id)
           
           
           
-          // Si oui on ajoute juste la nouvelle quantité et la mise à jour du prix à l'article :
+          // Si oui on additionne les quantity des articles de même id et colors et mise à jour du localstorageProducts :
           if (item) {
-            item.Number(quantity) = item.quantity + optionProduct.quantity;
-            item.totalPrice = item.price * optionProduct.quantity;
+            item.quantity = item.quantity + optionProduct.quantity;
             localStorage.setItem("produits", JSON.stringify(localStorageProducts));
             popupConfirmation();
             return;
